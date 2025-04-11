@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>weHealth</title>
+        <link rel="stylesheet" href="Style/Style.css">
+    </head>
+    <body>
+        <script src="JavaScript/Login.js"></script>
+        <script src="JavaScript/Switch_Theme.js"></script>
+        <div class="navbar">
+            <a href="Homepage.html" class="active"><b>Home</b></a>
+            <div class="dropdown">
+                <button class="dropbtn"><b>Calculator</b></button>
+                <div class="dropdown-content">
+                    <a href="Other webpage/Calculator/BMI_Calculator.html"><b>BMI Calculator</b></a>
+                    <a href="Other webpage/Calculator/Kcal_Burned_Calculator.html"><b>Kcal Calculator</b></a>
+                    <a href="Other webpage/Calculator/BMR_Calculator.html"><b>BMR Calculator</b></a>
+                    <a href="Other webpage/Calculator/Calorie_Calculator.html"><b>Calories Calculator</b></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><b>Suggestion</b></button>
+                <div class="dropdown-content">
+                    <a href="Other webpage/Suggestion/sport_suggest.html"><b>Sport Suggection</b></a>
+                    <a href="Other webpage/Suggestion/Diet_Suggestion.html"><b>Diet Suggestion</b></a>
+                </div>
+            </div>
+            <a href="Other webpage/About/About.html"><b>About</b></a>
+            <button class="theme_switcher" onclick="switchTheme()"><b>Dark Mode</b></button>
+        </div>
+        <div class="container" id="loginContainer">
+            <h2>Login System</h2>
+            <label>Username: <input type="text" id="username"></label><br>
+            <label>Password: <input type="password" id="password"></label><br>
+            <button onclick="register()">Register</button>
+            <button onclick="login()">Login</button>
+            <h3 id="message"></h3>
+            </div>
+            <div class="content" id="homeContent">
+                <h1>weHealth</h1>
+                <h2>A website provide health tracing services</h2>
+                <div class="contain">
+                    <div class="box">
+                        <h3>BMI Calculator</h3>
+                        <p>Calculate your BMI and base on your BMI to give you some advise</p>
+                        <a href="Other webpage/Calculator/BMI_Calculator.html"><p>Click me</p></a>
+                    </div>
+                    <div class="box">
+                        <h3>Kilocalories(Kcal) Calculator</h3>
+                        <p>Calculate the kilocalories you spend based on the sport you did</p>
+                        <a href="Other webpage/Calculator/Kcal_Burned_Calculator.html"><p>Click me</p></a>
+                    </div>
+                    <div class="box">
+                        <h3>Basal Metabolic Rate (BMR) Calculator</h3>
+                        <p>Calculate the minimum number of calories your body needs to function at a basic level</p>
+                        <a href="Other webpage/Calculator/BMR_Calculator.html"><p>Click me</p></a>
+                    </div>
+                </div>
+                <div class="contain">
+                    <div class="box">
+                        <h3>Calories Calculator</h3>
+                        <p>Calculate the food calories based on amount of food </p>
+                        <a href="Other webpage/Calculator/Calorie_Calculator.html"><p>Click me</p></a>
+                    </div>
+                    <div class="box">
+                        <h3>Sport Suggest</h3>
+                        <p>Sport suggest find your perfect sports</p>
+                        <a href="Other webpage/Suggestion/sport_suggest.html"><p>Click me</p></a>
+                    </div>
+                    <div class="box">
+                        <h3>Diet Suggest</h3>
+                        <p>Diet suggest points out the diet you needed</p>
+                        <a href="Other webpage/Suggestion/Diet_Suggestion.html"><p>Click me</p></a>
+                    </div>
+                </div>
+                <button onclick="logout()">Logout</button>
+            </div>
+    </body>
+</html>
