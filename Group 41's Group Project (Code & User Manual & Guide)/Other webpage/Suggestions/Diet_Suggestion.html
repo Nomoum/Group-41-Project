@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Suggestion</title>
+    <link rel="stylesheet" href="../../Style/Style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <script src="../../JavaScript/Switch_Theme.js"></script>
+    <div class="navbar">
+        <a href="../../Homepage.html"><b>Home</b></a>
+        <div class="dropdown">
+            <button class="dropbtn"><b>Calculator</b></button>
+            <div class="dropdown-content">
+                <a href="../Calculator/BMI_Calculator.html"><b>BMI Calculator</b></a>
+                <a href="../Calculator/Kcal_Burned_Calculator.html"><b>Kcal Calculator</b></a>
+                <a href="../Calculator/BMR_Calculator.html"><b>BMR Calculator</b></a>
+                <a href="../Calculator/Calorie_Calculator.html"><b>Calories Calculator</b></a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn_2"><b>Suggestion</b></button>
+            <div class="dropdown-content">
+                <a href="sport_suggest.html"><b>Sport Suggection</b></a>
+                <a href="Diet_Suggestion.html" class="active"><b>Diet Suggestion</b></a>
+            </div>
+        </div>
+        <a href="../About/About.html"><b>About</b></a>
+        <button class="theme_switcher" onclick="switchTheme()"><b>Dark Mode</b></button>
+    </div>
+    <div class="content">
+        <div class="box">
+            <h1>Diet Suggestion</h1>
+            <form id="dietForm">
+                <label for="bmi">Enter Your BMI:</label>
+                <input type="number" id="bmi" placeholder="Enter your BMI" step="0.1" min="10" max="50"><br>
+                <label for="goal">Choose Your Goal:</label>
+                <select id="goal">
+                    <option value="bulk">Bulk</option>
+                    <option value="cut">Cut</option>
+                </select><br>
+                <button type="button" onclick="suggestDiet()">Get Diet Suggestion</button>
+                <div class="result-container">
+                    <p id="dietSuggestion"></p>
+                </div>
+            </form>
+            <button type="button" onclick="exportToExcel()">Export to Excel</button>
+        </div>
+    </div>
+    <script>
+        function suggestDiet() {
+            const bmi = parseFloat(document.getElementById('bmi').value);
+            const goal = document.getElementById('goal').value;
+
+            if (isNaN(bmi) || bmi <= 0) {
+                alert("Please enter a valid BMI.");
+                return;
+            }
+
+            let suggestion = '';
+
+            if (goal === 'bulk') {
+                if (bmi < 18.5) {
+                    suggestion = "You are underweight. Focus on high-calorie, nutrient-dense foods like nuts, avocados, whole grains, and lean proteins.";
+                } else if (bmi >= 18.5 && bmi < 25) {
+                    suggestion = "You are in a healthy weight range. To bulk, increase your calorie intake slightly and consume more protein-rich foods.";
+                } else {
+                    suggestion = "You are overweight. Focus on clean bulking by eating lean proteins, complex carbs, and healthy fats while avoiding excess calories.";
+                }
+            } else if (goal === 'cut') {
+                if (bmi < 18.5) {
+                    suggestion = "You are underweight. Cutting is not recommended for you. Focus on reaching a healthy BMI first.";
+                } else if (bmi >= 18.5 && bmi < 25) {
+                    suggestion = "You are in a healthy weight range. For cutting, reduce your calorie intake slightly and focus on lean proteins and vegetables.";
+                } else {
+                    suggestion = "You are overweight. To cut, focus on a calorie deficit, high-protein meals, and incorporate more vegetables into your diet.";
+                }
+            }
+
+            document.getElementById('dietSuggestion').textContent = suggestion;
+
+            // Save data to localStorage
+            localStorage.setItem('dietData', JSON.stringify({
+                bmi: bmi,
+                goal: goal,
+                suggestion: suggestion
+            }));
+        }
+
+        function exportToExcel() {
+            const storedData = localStorage.getItem('dietData');
+            if (!storedData) {
+                alert('No data to export. Please get a diet suggestion first.');
+                return;
+            }
+
+            const data = JSON.parse(storedData);
+
+            const worksheetData = [
+                ["Metric", "Value"],
+                ["BMI", data.bmi],
+                ["Goal", data.goal],
+                ["Suggestion", data.suggestion]
+            ];
+
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Diet Suggestion");
+
+            XLSX.writeFile(workbook, "diet_suggestion.xlsx");
+        }
+    </script>
+</body>
+</html>

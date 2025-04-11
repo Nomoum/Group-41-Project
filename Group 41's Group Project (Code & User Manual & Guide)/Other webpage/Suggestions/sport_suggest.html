@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport Suggestion</title>
+    <link rel="stylesheet" href="../../Style/Style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Sport Suggestion</h1>
+    </header>
+
+    <script src="../../JavaScript/Switch_Theme.js"></script>
+    <div class="navbar">
+        <a href="../../Homepage.html"><b>Home</b></a>
+        <div class="dropdown">
+            <button class="dropbtn"><b>Suggestion</b></button>
+            <div class="dropdown-content">
+                <a href="../Calculator/BMI_Calculator.html"><b>BMI Calculator</b></a>
+                <a href="../Calculator/Kcal_Burned_Calculator.html"><b>Kcal Calculator</b></a>
+                <a href="../Calculator/BMR_Calculator.html"><b>BMR Calculator</b></a>
+                <a href="../Calculator/Calorie_Calculator.html"><b>Calories Calculator</b></a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn_2"><b>Calculator</b></button>
+            <div class="dropdown-content">
+                <a href="sport_suggest.html" class="active"><b>Sport Suggection</b></a>
+                <a href="Diet_Suggestion.html"><b>Diet Suggestion</b></a>
+            </div>
+        </div>
+        <a href="../About/About.html"><b>About</b></a>
+        <button class="theme_switcher" onclick="switchTheme()"><b>Dark Mode</b></button>
+    </div>
+    
+    <div id="sport-form" class="content">
+        <div class="box">
+        <h2>Find Your Perfect Sport</h2>
+        <form id="sport-input-form">
+            <label for="tiredness">Tiredness Level:</label>
+            <input type="range" id="tiredness" name="tiredness" min="0" max="10" step="1">
+
+            <label for="flexibility">Flexibility Level:</label>
+            <input type="range" id="flexibility" name="flexibility" min="0" max="10" step="1">
+
+            <label for="muscle">Muscle Preference:</label>
+            <select id="muscle" name="muscle">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            <button type="submit">Get Suggestion</button>
+        </form>
+        <p id="suggestion"></p>
+        <button type="button" onclick="exportToExcel()">Export to Excel</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        const sports = [
+            { name: 'Swimming'},
+            { name: 'Yoga'},
+            { name: 'Table Tennis'},
+            { name: 'Running'},
+            { name: 'Cycling'},
+            { name: 'Football'},
+            { name: 'Gym'},
+            { name: 'Basketball'}
+        ];
+
+        document.getElementById('sport-input-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const tiredness = parseFloat(document.getElementById('tiredness').value);
+            const flexibility = parseFloat(document.getElementById('flexibility').value);
+            const muscle = document.getElementById('muscle').value;
+
+            let suggestedSport = '';
+
+            sports.forEach(sport => {
+                if (tiredness > flexibility) {
+                    if (muscle === 'low' ) {
+                        suggestedSport = 'Swimming';
+                    } else if (muscle === 'medium') {
+                        suggestedSport = 'Running';
+                    } else if (muscle === 'high') {
+                        suggestedSport = 'Gym';
+                    }
+                } else if (tiredness < flexibility) {
+                    if (muscle === 'low') {
+                        suggestedSport = 'Yoga';
+                    } else if (muscle === 'medium') {
+                        suggestedSport = 'Cycling';
+                    } else if (muscle === 'high') {
+                        suggestedSport = 'Gym';
+                    }
+                } else {
+                    if (muscle === 'low') {
+                        suggestedSport ='Table Tennis';
+                    } else if (muscle === 'medium') {
+                        suggestedSport = 'Football';
+                    } else if (muscle === 'high') {
+                        suggestedSport ='Basketball';
+                    }
+                }
+            });
+
+            document.getElementById('suggestion').textContent = `Based on your inputs, we suggest trying ${suggestedSport}.`;
+
+            localStorage.setItem('Sport Suggeation', JSON.stringify({
+                    tiredness: tiredness,
+                    flexibility: flexibility,
+                    muscle: muscle,
+                    suggestion: document.getElementById('suggestion').textContent
+                }));
+        });
+
+        function exportToExcel() {
+                const storedData=localStorage.getItem('Sport Suggeation');
+                if (!storedData) {
+                    alert('No data to export. Please fount out the sport first.');
+                    return;
+                }
+
+                const data=JSON.parse(storedData);
+
+                const worksheetData=[
+                    ["Metric", "Value"],
+                    ["Tiredness", data.tiredness],
+                    ["Flexibility", data.flexibility],
+                    ["Muscle", data.muscle],
+                    ["Suggestion", data.suggestion]
+                ];
+
+                const worksheet=XLSX.utils.aoa_to_sheet(worksheetData);
+
+                const workbook=XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "BMI Results");
+
+                XLSX.writeFile(workbook, "bmi_results.xlsx");
+            }
+        </script>
+    </script>
+</body>
+
+</html>
