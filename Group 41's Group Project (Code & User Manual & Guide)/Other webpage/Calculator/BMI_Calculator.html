@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BMI Calculator</title>
+        <link rel="stylesheet" href="../../Style/Style.css">
+    </head>
+    <body>
+        <script src="../../JavaScript/Switch_Theme.js"></script>
+        <div class="navbar">
+            <a href="../../Homepage.html"><b>Home</b></a>
+            <div class="dropdown">
+                <button class="dropbtn_1"><b>Calculator</b></button>
+                <div class="dropdown-content">
+                    <a href="BMI_Calculator.html" class="active"><b>BMI Calculator</b></a>
+                    <a href="Kcal_Burned_Calculator.html"><b>Kcal Calculator</b></a>
+                    <a href="BMR_Calculator.html"><b>BMR Calculator</b></a>
+                    <a href="Calorie_Calculator.html"><b>Calories Calculator</b></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><b>Suggestion</b></button>
+                <div class="dropdown-content">
+                    <a href="../Suggestion/sport_suggest.html"><b>Sport Suggection</b></a>
+                    <a href="../Suggestion/Diet_Suggestion.html"><b>Diet Suggestion</b></a>
+                </div>
+            </div>
+            <a href="../About/About.html"><b>About</b></a>
+            <button class="theme_switcher" onclick="switchTheme()"><b>Dark Mode</b></button>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script>
+            function calculateBMI() {
+                var height=document.getElementById('height').value;
+                var weight=document.getElementById('weight').value;
+
+                if (height<=0 || weight<=0) {
+                    if (height<=0 && weight>0) {
+                        alert('invalid height');
+                        return;
+                    } else if (height>0 && weight<=0) {
+                        alert('invalid weight');
+                        return;
+                    } else if (height<=0 && weight<=0) {
+                        alert('invalid height and weight');
+                        return;
+                    }
+                }
+
+                var bmi=weight/(height*height)
+                BMI.textContent="Your BMI is "+bmi.toFixed(2);
+
+                var advice;
+                if (bmi<18.5) {
+                    advice="You are underweight. Consider speaking with a healthcare professional to gain a healthy amount of weight.";
+                } else if (bmi>=18.5 && bmi<25) {
+                    advice="You are within the healthy weight range. Keep up the good work!";
+                } else if (bmi>=25 && bmi<30) {
+                    advice="You are overweight. Consider making lifestyle changes to reach a healthier weight.";
+                } else {
+                    advice="You are obese. Speak with a healthcare professional to develop a plan to reach a healthier weight.";
+                }
+  
+                bmiAdvice.textContent=advice;
+
+                localStorage.setItem('bmiData', JSON.stringify({
+                    height: height,
+                    weight: weight,
+                    bmi: bmi.toFixed(2),
+                    advice: advice
+                }));
+            }
+            
+            function exportToExcel() {
+                const storedData=localStorage.getItem('bmiData');
+                if (!storedData) {
+                    alert('No data to export. Please calculate BMI first.');
+                    return;
+                }
+
+                const data=JSON.parse(storedData);
+
+                const worksheetData=[
+                    ["Metric", "Value"],
+                    ["Height (m)", data.height],
+                    ["Weight (kg)", data.weight],
+                    ["BMI", data.bmi],
+                    ["Advice", data.advice]
+                ];
+
+                const worksheet=XLSX.utils.aoa_to_sheet(worksheetData);
+
+                const workbook=XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "BMI Results");
+
+                XLSX.writeFile(workbook, "bmi_results.xlsx");
+            }
+        </script>
+        <div class="content">
+            <div class="box">
+                <h1>BMI Calculator</h1>
+                <form id="dataForm">
+                    <label>Height (m):</label>
+                    <input type="number" id="height" placeholder="Enter your height in meters"><br>
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight" placeholder="Enter your weight in kg"><br>
+                    <button type="button" id="submit-button" onclick="calculateBMI()">Calculate</button>
+                    <div class="result-container">
+                        <p id="BMI"></p>
+                        <p id="bmiAdvice"></p>
+                    </div>
+                </form>
+                <button type="button" onclick="exportToExcel()">Export to Excel</button>
+            </div>
+        </div>
+    </body>
+</html>

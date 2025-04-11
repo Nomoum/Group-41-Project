@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Kcal Burned Calculator</title>
+        <link rel="stylesheet" href="../../Style/Style.css">
+    </head>
+    <body>
+        <script src="../../JavaScript/Switch_Theme.js"></script>
+        <div class="navbar">
+            <a href="../../Homepage.html"><b>Home</b></a>
+            <div class="dropdown">
+                <button class="dropbtn_1" ><b>Calculator</b></button>
+                <div class="dropdown-content">
+                    <a href="BMI_Calculator.html"><b>BMI Calculator</b></a>
+                    <a href="Kcal_Burned_Calculator.html" class="active"><b>Kcal Calculator</b></a>
+                    <a href="BMR_Calculator.html"><b>BMR Calculator</b></a>
+                    <a href="Calorie_Calculator.html"><b>Calories Calculator</b></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><b>Suggestion</b></button>
+                <div class="dropdown-content">
+                    <a href="../Suggestion/sport_suggest.html"><b>Sport Suggection</b></a>
+                    <a href="../Suggestion/Diet_Suggestion.html"><b>Diet Suggestion</b></a>
+                </div>
+            </div>
+            <a href="../About/About.html"><b>About</b></a>
+            <button class="theme_switcher" onclick="switchTheme()"><b>Dark Mode</b></button>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script>
+            function calculateKcalBurned(){
+                var sport=document.getElementById("sport").value;
+                var time=document.getElementById("time").value;
+                
+                if (time<=0) {
+                    alert('invalid time')
+                } else if (time>0) {
+                    var kcalPerMinutes;
+                    switch (sport) {
+                        case "walking":
+                            kcalPerMinutes=5;
+                            break;
+                        case "running":
+                            kcalPerMinutes=11;
+                            break;
+                        case "swimming":
+                            kcalPerMinutes=11;
+                            break;
+                        case "cycling":
+                            kcalPerMinutes=8;
+                            break;
+                    }
+                    var totalKcal=kcalPerMinutes*time;
+                    kcalBurned.textContent="Your kcal burned is "+totalKcal+" by doing "+time+" minutes "+sport;
+                }
+
+                localStorage.setItem('kcalData', JSON.stringify({
+                    sport: sport,
+                    time: time,
+                    kcalPerMinutes: kcalPerMinutes,
+                    kcalBurned: kcalBurned.textContent
+                }));
+            }
+
+            function exportToExcel() {
+                const storedData=localStorage.getItem('kcalData');
+                if (!storedData) {
+                    alert('No data to export. Please calculate Kcal Burned first.');
+                    return;
+                }
+
+                const data=JSON.parse(storedData);
+
+                const worksheetData=[
+                    ["Metric", "Value"],
+                    ["Sport type", data.sport],
+                    ["Time spent (m)", data.time],
+                    ["Kcal spend per minutes", data.kcalPerMinutes],
+                    ["Kcal Burned", data.kcalBurned]
+                ];
+
+                const worksheet=XLSX.utils.aoa_to_sheet(worksheetData);
+
+                const workbook=XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Kcal Burned Results");
+
+                XLSX.writeFile(workbook, "kcal_burned_results.xlsx");
+            }
+        </script>
+        <div class="content">
+            <div class="box">
+                <h1>Kcal Burned Calculator</h1>
+                <form id="dataForm">
+                    <label for="sport">Sport type:</label>
+                        <select id="sport">
+                            <option value="walking">Walking</option>
+                            <option value="running">Running</option>
+                            <option value="swimming">Swimming</option>
+                            <option value="cycling">Cycling</option> 
+                        </select>
+                    <label for="time">Enter time spent (in minutes):</label>
+                    <input type="number" id="time" placeholder="Minutes" min="1"><br>
+                    <button type="button" id="submit-button" onclick="calculateKcalBurned()">Calculate</button>
+                    <div class="result-container">
+                        <p id="kcalBurned"></p>
+                    </div>
+                </form>
+                <button type="button" onclick="exportToExcel()">Export to Excel</button>
+            </div>
+        </div>
+    </body>
+</html>

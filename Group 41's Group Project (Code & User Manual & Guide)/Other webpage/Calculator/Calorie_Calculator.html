@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Simple Calorie Calculator</title>
+        <link rel="stylesheet" href="../../Style/Style.css">
+    </head>
+    <body>
+        <script src="../../JavaScript/Switch_Theme.js"></script>
+        <div class="navbar">
+            <a href="../../Homepage.html"><b>Home</b></a>
+            <div class="dropdown">
+                <button class="dropbtn_1"><b>Calculator</b></button>
+                <div class="dropdown-content">
+                    <a href="BMI_Calculator.html"><b>BMI Calculator</b></a>
+                    <a href="Kcal_Burned_Calculator.html"><b>Kcal Calculator</b></a>
+                    <a href="BMR_Calculator.html"><b>BMR Calculator</b></a>
+                    <a href="Calorie_Calculator.html" class="active"><b>Calories Calculator</b></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><b>Suggestion</b></button>
+                <div class="dropdown-content">
+                    <a href="../Suggestion/sport_suggest.html"><b>Sport Suggection</b></a>
+                    <a href="../Suggestion/Diet_Suggestion.html"><b>Diet Suggestion</b></a>
+                </div>
+            </div>
+            <a href="../About/About.html"><b>About</b></a>
+            <button class="theme_switcher" onclick="switchTheme()"><b>Dark Mode</b></button>
+        </div>
+        <div class="content">
+            <div class="box">
+                <h2>Calories Calculator</h2>
+                <label for="food">Food Item:</label>
+                <input type="text" id="food" placeholder="Example: Banana"><br>
+                <label for="calories">Calories per 100g:</label>
+                <input type="number" id="calories" placeholder="Example: 89"><br>
+                <label for="weight">Weight in grams:</label>
+                <input type="number" id="weight" placeholder="Example: 120"><br>
+                <button onclick="calculate()">Calculate Calories</button>
+                <p id="result"></p>
+                <button type="button" onclick="exportToExcel()">Export to Excel</button>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script>
+            function calculate() {
+                const food = document.getElementById('food').value;
+                const calories = parseFloat(document.getElementById('calories').value);
+                const weight = parseFloat(document.getElementById('weight').value);
+                
+                if (!food || isNaN(calories) || isNaN(weight)) {
+                    alert("Please fill in all fields with valid numbers");
+                    return;
+                }
+                
+                const total = (calories * weight) / 100;
+                    
+                document.getElementById('result').innerHTML = `<strong>${food}:</strong> ${total.toFixed(1)} calories (${weight}g)`;
+
+                localStorage.setItem('caloriesData', JSON.stringify({
+                    food: food,
+                    calories: calories,
+                    weight: weight,
+                    result: document.getElementById('result').innerHTM
+                }));
+            }
+
+            function exportToExcel() {
+                const storedData=localStorage.getItem('caloriesData');
+                if (!storedData) {
+                    alert('No data to export. Please calculate calories first.');
+                    return;
+                }
+
+                const data=JSON.parse(storedData);
+
+                const worksheetData=[
+                    ["Metric", "Value"],
+                    ["Food", data.food],
+                    ["Calories", data.calories],
+                    ["Result", data.result]
+                ];
+
+                const worksheet=XLSX.utils.aoa_to_sheet(worksheetData);
+
+                const workbook=XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Caloeies Results");
+
+                XLSX.writeFile(workbook, "calories_results.xlsx");
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BMR Calculator</title>
+        <link rel="stylesheet" href="../../Style/Style.css">
+    </head>
+    <body>
+        <script src="../../JavaScript/Switch_Theme.js"></script>
+        <div class="navbar">
+            <a href="../../Homepage.html"><b>Home</b></a>
+            <div class="dropdown">
+                <button class="dropbtn_1"><b>Calculator</b></button>
+                <div class="dropdown-content">
+                    <a href="BMI_Calculator.html"><b>BMI Calculator</b></a>
+                    <a href="Kcal_Burned_Calculator.html"><b>Kcal Calculator</b></a>
+                    <a href="BMR_Calculator.html" class="active"><b>BMR Calculator</b></a>
+                    <a href="Calorie_Calculator.html"><b>Calories Calculator</b></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><b>Suggestion</b></button>
+                <div class="dropdown-content">
+                    <a href="../Suggestion/sport_suggest.html"><b>Sport Suggection</b></a>
+                    <a href="../Suggestion/Diet_Suggestion.html"><b>Diet Suggestion</b></a>
+                </div>
+            </div>
+            <a href="../About/About.html"><b>About</b></a>
+            <button class="theme_switcher" onclick="switchTheme()"><b>Dark Mode</b></button>
+        </div>
+        <div class="content">
+            <div class="box">
+                <h2>BMR Calculator</h2>
+                <label>Age: <input type="number" id="age"></label><br>
+                <label>Gender:
+                    <select id="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </label><br>
+                <label>Weight (kg): <input type="number" id="weight"></label><br>
+                <label>Height (cm): <input type="number" id="height"></label><br>
+                <button onclick="calculateBMR()">Calculate BMR</button>
+                <p id="result"></p>
+                <button onclick = "window.location.href='home.html';">Back to homepage</button><br>
+                <button type="button" onclick="exportToExcel()">Export to Excel</button>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script>
+            function calculateBMR() {
+                let age = document.getElementById("age").value;
+                let gender = document.getElementById("gender").value;
+                let weight = document.getElementById("weight").value;
+                let height = document.getElementById("height").value;
+                let bmr;
+
+                if (gender === "male") {
+                    bmr = 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age);
+                } else {
+                    bmr = 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age);
+                }
+
+               result.textContent = `Your BMR is ${bmr.toFixed(2)} kcal/day`;
+
+                localStorage.setItem('bmr', JSON.stringify({
+                    age: age,
+                    gender: gender,
+                    weight: weight,
+                    height: height,
+                    bmr: result.textContent
+                }));
+            }
+
+            function exportToExcel() {
+                const storedData=localStorage.getItem('bmr');
+                if (!storedData) {
+                    alert('No data to export. Please calculate BMR first.');
+                    return;
+                }
+
+                const data=JSON.parse(storedData);
+
+                const worksheetData=[
+                    ["Metric", "Value"],
+                    ["age", data.age],
+                    ["gender", data.gender],
+                    ["weight (kg)", data.weight],
+                    ["height (cm)", data.height],
+                    ["BMR", data.bmr]
+                ];
+
+                const worksheet=XLSX.utils.aoa_to_sheet(worksheetData);
+
+                const workbook=XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "BMR Results");
+
+                XLSX.writeFile(workbook, "BMR_results.xlsx");
+            }
+        </script>
+    </body>
+</html>
